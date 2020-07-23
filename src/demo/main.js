@@ -8,7 +8,8 @@ import 'vant/lib/index.css';
 Vue.use(Vant);
 
 Vue.config.productionTip = false;
-import '../../public/middleware/process'
+import '../../public/middleware/process';
+console.log(process)
 
 new Vue({
     router,
