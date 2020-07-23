@@ -4,7 +4,9 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const webpack = require('webpack');
 
 module.exports = (env) => {
+    console.log(env)
     let ProjectName = env.name;
+    let log = console;
     return {
         mode: 'development',
         entry: './src/' +ProjectName+ '/main.js',
@@ -34,7 +36,13 @@ module.exports = (env) => {
             // 打印更新的模块路径
             new webpack.NamedModulesPlugin(),
             // 热更新插件
-            new webpack.HotModuleReplacementPlugin()
+            new webpack.HotModuleReplacementPlugin(),
+            new webpack.DefinePlugin({
+                'processEnv': {
+                    "NODE_ENV": JSON.stringify(env.NODE_ENV),
+                    "ProjectName": JSON.stringify(env.name)
+                }
+            }),
         ],
         module: {
             rules: [

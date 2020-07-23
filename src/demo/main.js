@@ -7,13 +7,14 @@ import Vant from 'vant';
 import 'vant/lib/index.css';
 Vue.use(Vant);
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+import '../../public/middleware/process'
 
 new Vue({
     router,
     store,
     render: h => h(App)
-}).$mount('#app')
+}).$mount('#app');
 
 
 if (module.hot) {
