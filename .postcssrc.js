@@ -6,7 +6,7 @@ module.exports = ({ file }) => {
     return {
         plugins: {
             'autoprefixer': {
-                browsers: [
+                overrideBrowserslist: [
                     '> 1%',
                     'last 10 Chrome versions',
                     'last 10 Firefox versions',

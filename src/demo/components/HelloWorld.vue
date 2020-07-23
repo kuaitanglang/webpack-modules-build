@@ -38,9 +38,11 @@
 
 <script>
   export default {
+      props:{
+        msg:''
+      },
       data(){
         return {
-          msg:"HELLO"
         }
       }
   }
