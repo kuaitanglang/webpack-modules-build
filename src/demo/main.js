@@ -7,9 +7,10 @@ import Vant from 'vant';
 import 'vant/lib/index.css';
 Vue.use(Vant);
 
+import './style.css';
+
 Vue.config.productionTip = false;
-import '../../public/middleware/process';
-console.log(process)
+
 
 new Vue({
     router,

@@ -1,98 +1,56 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const webpack = require('webpack');
+const merge = require('webpack-merge').merge;
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
+const common = require('./webpack.common');
 module.exports = (env) => {
-    console.log(env)
-    let ProjectName = env.name;
-    let log = console;
-    return {
-        mode: 'development',
-        entry: './src/' +ProjectName+ '/main.js',
-        output: {
-            filename: 'bundle.js',
-            path: path.resolve(__dirname, 'dist/' + ProjectName)
-        },
-        devServer: {
-            port: 9000,
-            host: '0.0.0.0',
-            inline: true,
-            useLocalIp: true,
-            // 自动打开浏览器
-            open: true,
-            hot: true,
-            historyApiFallback: true,
-            // 告诉服务器从哪里dist目录中提供内容
-            contentBase: './dist/' + ProjectName,
-        },
-        plugins: [
-            new HtmlWebpackPlugin({
-                template: './public/index.html',
-                favicon: './src/' +ProjectName+ '/assets/favicon.ico',
-            }),
-            new VueLoaderPlugin(),
 
-            // 打印更新的模块路径
-            new webpack.NamedModulesPlugin(),
-            // 热更新插件
-            new webpack.HotModuleReplacementPlugin(),
-            new webpack.DefinePlugin({
-                'processEnv': {
-                    "NODE_ENV": JSON.stringify(env.NODE_ENV),
-                    "ProjectName": JSON.stringify(env.name)
-                }
-            }),
+    let Common_config = common(env);
+
+    let webpackConfig = merge(Common_config,{
+        mode: 'production',
+        // devtool: 'source-map',
+        performance: {
+            hints: 'warning'
+        },
+        plugins : [
+            // 提取@import css到独立的css文件
+            new ExtractTextPlugin({
+                filename: '[name].[chunkhash:8].css',
+                allChunks: true,
+                //disable: false,//警用插件
+            })
         ],
-        module: {
-            rules: [
-                {
-                    test: /\.css$/,
-                    use: ['style-loader', 'css-loader', 'postcss-loader']
-                },
-                {
-                    test: /\.(scss|less)$/,
-                    use: ['style-loader', 'css-loader', 'sass-loader', 'less-loader', 'postcss-loader']
-                },
-                {
-                    test: /\.vue$/,
-                    use: [
-                        'vue-loader',
-                        /*{
-                            loader: 'style-vw-loader',
-                            options: {
-                                unitToConvert: 'px',
-                                viewportWidth: 375,
-                                unitPrecision: 5,
-                                viewportUnit: 'vw',
-                                fontViewportUnit: 'vw',
-                                minPixelValue: 1
-                            }
-                        },*/
-                    ]
-                },
-                {
-                    test: /\.js$/,
-                    loader: 'babel-loader',
-                    exclude: /node_modules/,
-                },
-                {
-                    test: /\.(eot(|\?v=.*)|woff(|\?v=.*)|woff2(|\?v=.*)|ttf(|\?v=.*)|svg(|\?v=.*))$/,
-                    loader: 'file-loader',
-                    // options: {name: 'static/iconfont/[name].[hash:8].[ext]'},
-                },
-                {
-                    //html中引用过的图片将会打包至images目录下，未使用过的将不会存在
-                    test: /\.(png|jpg|jpeg|gif|ico)$/,
-                    loader: 'url-loader',
-                    options: {
-                        limit: 20000,
-                        esModule: false,
-                        //name:'images/[name].[hash:8].[ext]',
-                        // name: './dist/assets/images/[name].[ext]'
-                    }
+        optimization:{
+            //提取公共代码
+            splitChunks: {
+                chunks: "initial",
+                minSize: 50000,
+                minChunks: 1,
+                // name: true,
+                // maxAsyncRequests: 5,
+                // maxInitialRequests: 3,
+                // automaticNameDelimiter: '~',
+                cacheGroups: {
+                    vendor: {
+                        name: "vendor",
+                        test: /[\\/]node_modules[\\/]/,
+                        chunks: "initial",
+                        minChunks: 5,
+                        priority: 10 // 优先级
+                    },
+                    common: {
+                        name: "common",
+                        test: /[\\/]src[\\/]/,
+                        minSize: 1024,
+                        chunks: "initial",
+                        priority: 5,
+                    },
                 }
-            ]
+            }
         }
-    };
+    });
+
+    return webpackConfig;
 }

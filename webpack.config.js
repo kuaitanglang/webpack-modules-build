@@ -1,19 +1,23 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const webpack = require('webpack');
+const merge = require('webpack-merge').merge;
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+//自定义主题
+const colors = require( "colors");
+colors.setTheme({info: 'green',warn: 'yellow',debug: 'blue',error: 'red'});
+//common
+const common = require('./webpack.common');
 
 module.exports = (env) => {
-    console.log(env)
+    if (!env){
+        console.error('缺少环境参数 env; eg:--env.NODE_ENV=dev --env.name=demo'.red);
+    }
+
     let ProjectName = env.name;
-    let log = console;
-    return {
+    let Common_config = common(env);
+
+    let WebpackConfig = merge(Common_config, {
         mode: 'development',
-        entry: './src/' +ProjectName+ '/main.js',
-        output: {
-            filename: 'bundle.js',
-            path: path.resolve(__dirname, 'dist/' + ProjectName)
-        },
         devServer: {
             port: 9000,
             host: '0.0.0.0',
@@ -27,72 +31,17 @@ module.exports = (env) => {
             contentBase: './dist/' + ProjectName,
         },
         plugins: [
-            new HtmlWebpackPlugin({
-                template: './public/index.html',
-                favicon: './src/' +ProjectName+ '/assets/favicon.ico',
+            new ExtractTextPlugin({
+                filename: '[name].[chunkhash:8].css',
+                allChunks: true,
+                //disable: false,//警用插件
             }),
-            new VueLoaderPlugin(),
-
             // 打印更新的模块路径
             new webpack.NamedModulesPlugin(),
             // 热更新插件
             new webpack.HotModuleReplacementPlugin(),
-            new webpack.DefinePlugin({
-                'processEnv': {
-                    "NODE_ENV": JSON.stringify(env.NODE_ENV),
-                    "ProjectName": JSON.stringify(env.name)
-                }
-            }),
         ],
-        module: {
-            rules: [
-                {
-                    test: /\.css$/,
-                    use: ['style-loader', 'css-loader', 'postcss-loader']
-                },
-                {
-                    test: /\.(scss|less)$/,
-                    use: ['style-loader', 'css-loader', 'sass-loader', 'less-loader', 'postcss-loader']
-                },
-                {
-                    test: /\.vue$/,
-                    use: [
-                        'vue-loader',
-                        /*{
-                            loader: 'style-vw-loader',
-                            options: {
-                                unitToConvert: 'px',
-                                viewportWidth: 375,
-                                unitPrecision: 5,
-                                viewportUnit: 'vw',
-                                fontViewportUnit: 'vw',
-                                minPixelValue: 1
-                            }
-                        },*/
-                    ]
-                },
-                {
-                    test: /\.js$/,
-                    loader: 'babel-loader',
-                    exclude: /node_modules/,
-                },
-                {
-                    test: /\.(eot(|\?v=.*)|woff(|\?v=.*)|woff2(|\?v=.*)|ttf(|\?v=.*)|svg(|\?v=.*))$/,
-                    loader: 'file-loader',
-                    // options: {name: 'static/iconfont/[name].[hash:8].[ext]'},
-                },
-                {
-                    //html中引用过的图片将会打包至images目录下，未使用过的将不会存在
-                    test: /\.(png|jpg|jpeg|gif|ico)$/,
-                    loader: 'url-loader',
-                    options: {
-                        limit: 20000,
-                        esModule: false,
-                        //name:'images/[name].[hash:8].[ext]',
-                        // name: './dist/assets/images/[name].[ext]'
-                    }
-                }
-            ]
-        }
-    };
+    });
+
+    return WebpackConfig;
 }

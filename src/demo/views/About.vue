@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <h1 @click="show=true">This is an about page</h1>
+    <h1 @click="show=true" class="h-one">This is an about page.</h1>
 
     <van-popup
             v-model="show"
@@ -21,3 +21,8 @@
     }
   }
 </script>
+<style lang="scss" scoped>
+  .h-one{
+    font-weight: bold;
+  }
+</style>
