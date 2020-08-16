@@ -20,6 +20,7 @@ new Vue({
 
 
 if (module.hot) {
+    console.log(2)
     module.hot.accept();
     /*module.hot.accept('./source', () => {
         const str = require('./source').default
