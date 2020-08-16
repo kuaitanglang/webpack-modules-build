@@ -28,6 +28,11 @@ module.exports = (env) => {
 			historyApiFallback: true,
 			// 告诉服务器从哪里dist目录中提供内容
 			contentBase: './dist/' + ProjectName,
+			proxy:{
+				'/api':{
+					target:''
+				}
+			}
 		},
 		plugins: [
 			// 打印更新的模块路径
