@@ -1,2 +1,2 @@
 import store from './store';
-import '../../public/middleware/process'
+import '@/public/middleware/auth'
