@@ -17,6 +17,7 @@ module.exports = (env) => {
 	
 	let WebpackConfig = merge(Common_config, {
 		mode: 'development',
+		devtool: 'source-map',
 		devServer: {
 			port: 9000,
 			host: '0.0.0.0',

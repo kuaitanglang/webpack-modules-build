@@ -38,7 +38,7 @@ module.exports = (env) => {
 		resolve: {
 			extensions: ['.js', '.vue', '.json', '.css', '.*'],
 			alias: {
-				'@': path.resolve(__dirname, './'),
+				'@': path.resolve(__dirname, './'),//根目录
 			}
 		},
 		plugins: [
