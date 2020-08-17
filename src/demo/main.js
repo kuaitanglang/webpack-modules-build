@@ -1,16 +1,16 @@
 import Vue from 'vue';
+Vue.config.productionTip = false;
+import '@/public/axios';
+import mixin from '@/public/common/mixin';
+Vue.mixin(mixin);
+
 import App from './App.vue';
 import router from './router';
 import store from './store';
-import '@/public/axios';
 
 import Vant from 'vant';
 import 'vant/lib/index.css';
 Vue.use(Vant);
-
-import './css/style.css';
-
-Vue.config.productionTip = false;
 
 
 new Vue({
