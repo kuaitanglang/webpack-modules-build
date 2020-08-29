@@ -4,58 +4,73 @@
                   border
                   row-key="id"
                   align="left" style="width: 100%">
-            <!--<el-table-column type="expand"></el-table-column>
-            <el-table-column type="selection" width="55"></el-table-column>-->
-            <el-table-column v-for="(item, index) in col"
-                             :type="index===0?'expand':index===1?'selection':''"
-                             :key="`col_${index}`"
-                             :prop="dropCol[index].prop||''"
-                             :label="item.label||''">
+            <el-table-column type="expand">
+                <template v-slot:default="scope">
+                    <div>{{scope.row}}</div>
+                </template>
             </el-table-column>
+            <el-table-column type="selection"></el-table-column>
+            <el-table-column v-for="(item, index) in col"
+                             v-if="index>1"
+                             align="center"
+                             :key="`col_${index}`"
+                             :label="item.label"
+                             :fixed="item.fixed"
+                             :prop="dropCol[index].prop"
+                             :formatter="dropCol[index].formatter">
+                <template slot-scope="scope">
+                    <div v-if="dropCol[index].label=='操作'">操作</div>
+                    <div v-else>{{dropCol[index].formatter?dropCol[index].formatter(scope.row, scope.column,scope.row[dropCol[index].prop]): scope.row[dropCol[index].prop]}}</div>
+                </template>
+            </el-table-column>
+
         </el-table>
-        <pre style="text-align: left">
-      {{dropCol}}
-    </pre>
+        <div style="display: flex">
+            <div>
+                <pre style="text-align: left">
+                  {{col}}
+                </pre>
+            </div>
+            <div>
+                <pre style="text-align: left">
+                  {{dropCol}}
+                </pre>
+            </div>
+        </div>
         <hr>
         <pre style="text-align: left">
-      {{tableData}}
-    </pre>
+          {{tableData}}
+        </pre>
     </div>
 </template>
 <script>
     export default {
         data() {
+            let cfg = [
+                {fixed: 'left'}, {fixed: 'left'},
+                {
+                    label: '日期',
+                    prop: 'date'
+                },
+                {
+                    label: '姓名',
+                    prop: 'name',
+                    formatter: function (row, column, cellValue) {
+                        return cellValue + '9*9'
+                    }
+                },
+                {
+                    label: '地址',
+                    prop: 'address'
+                },
+                {
+                    fixed: 'right',
+                    label: '操作',
+                }
+            ];
             return {
-                col: [
-                    {},{},
-                    {
-                        label: '日期',
-                        prop: 'date'
-                    },
-                    {
-                        label: '姓名',
-                        prop: 'name'
-                    },
-                    {
-                        label: '地址',
-                        prop: 'address'
-                    }
-                ],
-                dropCol: [
-                    {},{},
-                    {
-                        label: '日期',
-                        prop: 'date'
-                    },
-                    {
-                        label: '姓名',
-                        prop: 'name'
-                    },
-                    {
-                        label: '地址',
-                        prop: 'address'
-                    }
-                ],
+                col: cfg,
+                dropCol: cfg.slice(0),
                 tableData: [
                     {
                         id: '1',
@@ -117,13 +132,9 @@
                                 wrapperElem.insertBefore(wrapperElem.children[oldIndex], targetThElem)
                             }
                             return;
-                        }else{
+                        }else if(newIndex<2){
                             // 错误的移动第三后之后的进前两项
-                            if (newIndex > oldIndex) {
-                                wrapperElem.insertBefore(targetThElem, wrapperElem.children[oldIndex])
-                            } else {
-                                wrapperElem.insertBefore(wrapperElem.children[oldIndex], targetThElem)
-                            }
+                            wrapperElem.insertBefore(targetThElem,wrapperElem.children[oldIndex+1])
                             return;
                         }
                         const oldItem = this.dropCol[oldIndex]
