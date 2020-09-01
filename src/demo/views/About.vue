@@ -20,7 +20,9 @@
                              :formatter="dropCol[index].formatter">
                 <template slot-scope="scope">
                     <div v-if="dropCol[index].label=='操作'">操作</div>
-                    <div v-else>{{dropCol[index].formatter?dropCol[index].formatter(scope.row, scope.column,scope.row[dropCol[index].prop]): scope.row[dropCol[index].prop]}}</div>
+                    <div v-else>{{dropCol[index].formatter?dropCol[index].formatter(scope.row,
+                        scope.column,scope.row[dropCol[index].prop]): scope.row[dropCol[index].prop]}}
+                    </div>
                 </template>
             </el-table-column>
 
@@ -109,7 +111,7 @@
                 const tbody = document.querySelector('.el-table__body-wrapper tbody')
                 const _this = this
                 this.$Sortable.create(tbody, {
-                    onEnd({ newIndex, oldIndex }) {
+                    onEnd({newIndex, oldIndex}) {
                         const currRow = _this.tableData.splice(oldIndex, 1)[0]
                         _this.tableData.splice(newIndex, 0, currRow)
                     }
@@ -121,10 +123,10 @@
                 this.sortable = this.$Sortable.create(wrapperTr, {
                     animation: 180,
                     delay: 0,
-                    onEnd: ({ item, newIndex, oldIndex }) => {
+                    onEnd: ({item, newIndex, oldIndex}) => {
                         let targetThElem = item
                         let wrapperElem = targetThElem.parentNode
-                        if (oldIndex<2) {
+                        if (oldIndex < 2) {
                             // 错误的移动前两个
                             if (newIndex > oldIndex) {
                                 wrapperElem.insertBefore(targetThElem, wrapperElem.children[oldIndex])
@@ -132,9 +134,9 @@
                                 wrapperElem.insertBefore(wrapperElem.children[oldIndex], targetThElem)
                             }
                             return;
-                        }else if(newIndex<2){
+                        } else if (newIndex < 2) {
                             // 错误的移动第三后之后的进前两项
-                            wrapperElem.insertBefore(targetThElem,wrapperElem.children[oldIndex+1])
+                            wrapperElem.insertBefore(targetThElem, wrapperElem.children[oldIndex + 1])
                             return;
                         }
                         const oldItem = this.dropCol[oldIndex]
