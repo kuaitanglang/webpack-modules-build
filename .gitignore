@@ -2,5 +2,7 @@ node_modules
 /coverage
 *.log
 *.env
+*.idea
+*.git
 package-lock.json
 yarn.lock
